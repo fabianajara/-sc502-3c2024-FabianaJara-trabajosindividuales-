@@ -1,0 +1,268 @@
+/*********HOME*********/
+.index {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.image-container {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  margin-bottom: 0;
+}
+.image-container {
+  position: relative;
+  height: calc(100vh - 60px); /* Restar el alto del navbar si es necesario */
+  width: 100vw;
+  margin-bottom: 0;
+}
+.full-screen-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+.blue-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 167, 0.303);
+  z-index: 1;
+  margin-bottom: 0;
+}
+
+/* Centrar las pestañas del navbar */
+.navbar-nav {
+  display: flex;
+  justify-content: center;
+  gap: 50px; /* Espacio entre los elementos */
+  flex-grow: 1;
+}
+
+.navbar-brand {
+  margin-right: auto;
+}
+
+.navbar-collapse {
+  flex-grow: 0; /* Para evitar que la barra de navegación se expanda demasiado */
+}
+
+.navbar-nav .nav-link {
+  position: relative;
+  padding: 5px;
+  text-align: center;
+}
+
+.navbar-nav .nav-link::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    rgb(56, 104, 106),
+    rgb(24, 119, 149),
+    rgb(37, 137, 189)
+  );
+  z-index: 1;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s ease-in-out;
+}
+
+.navbar-nav .nav-link:hover::before {
+  transform: scaleX(1);
+}
+.espacio {
+  background-color: blue;
+}
+
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 991.98px) {
+  .navbar-nav {
+    gap: 30px;
+  }
+}
+
+/*********DOCTORES*********/
+.bodyDoctores {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-image: url("https://www.napolilaw.com/wp-content/uploads/2022/06/blue-medical-background-2021-08-26-20-00-46-utc-scaled-e1643217979507.jpg");
+  background-repeat: no-repeat;
+  background-size: cover; /* Ensures the image covers the entire body */
+  background-attachment: fixed; /* Keeps the background fixed while scrolling */
+}
+
+/* Estilo para las tarjetas */
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Mantener la altura al 100% */
+}
+
+.card-img-top {
+  max-height: 200px;
+  object-fit: cover;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.852);
+}
+
+.flex-grow-1 {
+  flex-grow: 1;
+}
+
+.mt-auto {
+  margin-top: auto;
+}
+
+.h-100 {
+  height: 100%;
+}
+
+/*********Comentarios*********/
+.bodyComentarios {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-image: url("https://www.choa.org/-/media/Images/Childrens/global/heros/utility/wait-times/town-center-waiting-room-1440x748.jpg?h=748&la=en&w=1440&hash=CD4ADF43334EDEE0812DD9CAE4701CC97839B0D7");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+/* Estilo para el contenedor de comentarios */
+.comments-box {
+  background: rgba(0, 0, 0, 0.68);
+  border-radius: 8px;
+  padding: 20px;
+  color: #ffffff;
+  margin-bottom: 40px;
+  margin-top: 40px;
+}
+
+/* Título de comentarios */
+.blog-comment h3 {
+  color: #ffffff;
+  font-weight: normal; /* Eliminar negrita del título */
+}
+
+/* Otros estilos existentes */
+hr {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border: 0;
+  border-top: 1px solid #ffffff;
+}
+
+a {
+  color: #82b440;
+  text-decoration: none;
+}
+
+.blog-comment::before,
+.blog-comment::after,
+.blog-comment-form::before,
+.blog-comment-form::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.blog-comment {
+  padding-left: 15%;
+  padding-right: 15%;
+}
+
+.blog-comment ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.blog-comment img {
+  opacity: 1;
+  filter: Alpha(opacity=100);
+  border-radius: 4px;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.blog-comment img.avatar {
+  position: relative;
+  float: left;
+  margin-left: 0;
+  margin-top: 0;
+  width: 65px;
+  height: 65px;
+}
+
+.blog-comment .post-comments {
+  border: 1px solid #eee;
+  margin-bottom: 20px;
+  margin-left: 85px;
+  margin-right: 0px;
+  padding: 10px 20px;
+  position: relative;
+  border-radius: 4px;
+  background: #fff;
+  color: #6b6e80;
+}
+
+.blog-comment .meta {
+  font-size: 15px; /* Tamaño de letra aumentado */
+  color: #aaaaaa;
+  padding-bottom: 8px;
+  margin-bottom: 10px !important;
+  border-bottom: 1px solid #eee;
+}
+
+.blog-comment .comment-text {
+  margin-left: 85px; /* Alinear comentario a la izquierda */
+}
+
+.blog-comment .comment-author {
+  font-weight: bold; /* Resaltar el nombre del autor */
+  font-size: 16px; /* Aumentar tamaño de letra del nombre */
+}
+
+.blog-comment ul.comments ul {
+  list-style-type: none;
+  padding: 0;
+  margin-left: 85px;
+}
+
+.blog-comment-form {
+  padding-left: 15%;
+  padding-right: 15%;
+  padding-top: 40px;
+}
+
+.blog-comment h3,
+.blog-comment-form h3 {
+  margin-bottom: 40px;
+  font-size: 26px;
+  line-height: 30px;
+  font-weight: normal; /* Cambiar a normal */
+}
