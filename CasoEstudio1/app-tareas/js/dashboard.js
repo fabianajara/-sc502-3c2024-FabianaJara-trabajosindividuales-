@@ -9,7 +9,9 @@ document.addEventListener('DOMContentLoaded', function () {
             title: "Complete project report",
             description: "Prepare and submit the project report",
             dueDate: "2024-12-01",
-            comments: [{ id: 1, text: "Remember to check spelling" }]
+            comments: [{ id: 1, text: "Remember to check spelling" },
+                { id: 2, text: "Remember to check documents" }
+            ]
         },
         {
             id: 2,
