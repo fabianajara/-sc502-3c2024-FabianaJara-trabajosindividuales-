@@ -1,33 +1,36 @@
 document.addEventListener('DOMContentLoaded', function () {
     let isEditMode = false;
-    let edittingId;
-    const tasks = [{
+    let editingId;
+    let editingCommentIndex = null;
+
+    const tasks = [
+        {
             id: 1,
             title: "Complete project report",
             description: "Prepare and submit the project report",
             dueDate: "2024-12-01",
-            comments: []
+            comments: [{ id: 1, text: "Remember to check spelling" }]
         },
         {
             id: 2,
             title: "Team Meeting",
             description: "Get ready for the season",
             dueDate: "2024-12-01",
-            comments: []
+            comments: [{ id: 1, text: "Confirm attendance with everyone" }]
         },
         {
             id: 3,
             title: "Code Review",
-            description: "Check partners code",
+            description: "Check partner's code",
             dueDate: "2024-12-01",
-            comments: []
+            comments: [{ id: 1, text: "Focus on edge cases" }]
         },
         {
             id: 4,
             title: "Deploy",
             description: "Check deploy steps",
             dueDate: "2024-12-01",
-            comments: []
+            comments: [{ id: 1, text: "Run final tests" }]
         }
     ];
 
@@ -38,10 +41,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const taskCard = document.createElement('div');
             taskCard.className = 'col-md-4 mb-3';
             taskCard.innerHTML = `
-                <div class='card'>
+                <div class='card' style='background-color: #f0f9ff; border: 1px solid #cce7ff;'>
                     <div class='card-body'>
                         <h5 class='card-title'>${task.title}</h5>
-                        <p class='card-text'>${task.description}</p>
+                        <p class='card-text text-secondary'>${task.description}</p>
                         <p class='card-text'><small class='text-muted'>Due: ${task.dueDate}</small></p>
                         <button class='btn btn-info btn-sm comment-task' data-id="${task.id}">Add Comment</button>
                         <ul id='comments-${task.id}' class='list-group mt-2'></ul> 
@@ -51,149 +54,119 @@ document.addEventListener('DOMContentLoaded', function () {
                         <button class='btn btn-danger btn-sm delete-task' data-id="${task.id}">Delete</button> 
                     </div> 
                 </div>`;
-            
-            // Load existing comments
-            const commentsList = document.getElementById(`comments-${task.id}`);
+
+            const commentsList = taskCard.querySelector(`#comments-${task.id}`);
             task.comments.forEach(comment => {
                 const commentItem = document.createElement('li');
-                commentItem.className = 'list-group-item d-flex justify-content-between align-items-center';
-                commentItem.textContent = comment;
+                commentItem.className = 'list-group-item';
+                commentItem.style.backgroundColor = '#e6f7ff';
+                commentItem.style.border = '1px solid #cce7ff';
+                commentItem.innerHTML = `
+                    <div style="white-space: pre-wrap; color: #595959;">${comment.text}</div>
+                    <div class="text-end mt-2">
+                        <button class="btn btn-outline-secondary btn-sm edit-comment" data-task-id="${task.id}" data-comment-id="${comment.id}">Edit</button>
+                        <button class="btn btn-outline-danger btn-sm delete-comment" data-task-id="${task.id}" data-comment-id="${comment.id}">Delete</button>
+                    </div>`;
 
-                // Create delete button for the comment
-                const deleteButton = document.createElement('button');
-                deleteButton.className = 'btn btn-danger btn-sm';
-                deleteButton.textContent = 'Delete';
-                deleteButton.onclick = function () {
-                    commentsList.removeChild(commentItem);
-                    task.comments.splice(task.comments.indexOf(comment), 1); // Remove from task comments array
-                };
-
-                commentItem.appendChild(deleteButton);
                 commentsList.appendChild(commentItem);
             });
 
             taskList.appendChild(taskCard);
         });
 
-        document.querySelectorAll('.edit-task').forEach(function (button) {
-            button.addEventListener('click', handleEditTask);
-        });
+        document.querySelectorAll('.edit-task').forEach(button => button.addEventListener('click', handleEditTask));
+        document.querySelectorAll('.delete-task').forEach(button => button.addEventListener('click', handleDeleteTask));
+        document.querySelectorAll('.comment-task').forEach(button => button.addEventListener('click', openCommentModal));
+        document.querySelectorAll('.edit-comment').forEach(button => button.addEventListener('click', handleEditComment));
+        document.querySelectorAll('.delete-comment').forEach(button => button.addEventListener('click', handleDeleteComment));
+    }
 
-        document.querySelectorAll('.delete-task').forEach(function (button) {
-            button.addEventListener('click', handleDeleteTask);
-        });
-
-        document.querySelectorAll('.comment-task').forEach(function (button) {
-            button.addEventListener('click', function () {
-                const taskId = parseInt(button.dataset.id);
-                document.getElementById('save-comment').dataset.taskId = taskId; // Store the task ID
-                const modal = new bootstrap.Modal(document.getElementById("commentModal"));
-                modal.show();
-            });
-        });
+    function openCommentModal(event) {
+        const taskId = parseInt(event.target.dataset.id);
+        document.getElementById('save-comment').dataset.taskId = taskId;
+        editingCommentIndex = null;
+        document.getElementById('comment-text').value = '';
+        new bootstrap.Modal(document.getElementById('commentModal')).show();
     }
 
     function handleEditTask(event) {
         const taskId = parseInt(event.target.dataset.id);
         const task = tasks.find(t => t.id === taskId);
-        
+
         document.getElementById('task-title').value = task.title;
         document.getElementById('task-desc').value = task.description;
         document.getElementById('due-date').value = task.dueDate;
 
+        editingId = taskId;
         isEditMode = true;
-        edittingId = taskId;
-        
-        const modal = new bootstrap.Modal(document.getElementById("taskModal"));
-        modal.show();
+
+        new bootstrap.Modal(document.getElementById('taskModal')).show();
+    }
+
+    function handleEditComment(event) {
+        const taskId = parseInt(event.target.dataset.taskId);
+        const commentId = parseInt(event.target.dataset.commentId);
+        const task = tasks.find(t => t.id === taskId);
+
+        editingCommentIndex = task.comments.findIndex(c => c.id === commentId);
+        document.getElementById('comment-text').value = task.comments[editingCommentIndex].text;
+        document.getElementById('save-comment').dataset.taskId = taskId;
+
+        new bootstrap.Modal(document.getElementById('commentModal')).show();
     }
 
     function handleDeleteTask(event) {
-        const id = parseInt(event.target.dataset.id);
-        const index = tasks.findIndex(t => t.id === id);
-        
-        tasks.splice(index, 1);
-        
+        const taskId = parseInt(event.target.dataset.id);
+        const taskIndex = tasks.findIndex(t => t.id === taskId);
+        tasks.splice(taskIndex, 1);
         loadTasks();
     }
 
-    document.getElementById('task-form').addEventListener('submit', function (e) {
-        e.preventDefault();
-        
-        const title = document.getElementById("task-title").value;
-        const description = document.getElementById("task-desc").value;
-        const dueDate = document.getElementById("due-date").value;
+    function handleDeleteComment(event) {
+        const taskId = parseInt(event.target.dataset.taskId);
+        const commentId = parseInt(event.target.dataset.commentId);
+        const task = tasks.find(t => t.id === taskId);
+        const commentIndex = task.comments.findIndex(c => c.id === commentId);
+        task.comments.splice(commentIndex, 1);
+        loadTasks();
+    }
+
+    document.getElementById('task-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const title = document.getElementById('task-title').value;
+        const description = document.getElementById('task-desc').value;
+        const dueDate = document.getElementById('due-date').value;
 
         if (isEditMode) {
-            const task = tasks.find(t => t.id === edittingId);
+            const task = tasks.find(t => t.id === editingId);
             task.title = title;
             task.description = description;
             task.dueDate = dueDate;
+            isEditMode = false;
         } else {
-            const newTask = {
-                id: tasks.length + 1,
-                title: title,
-                description: description,
-                dueDate: dueDate,
-                comments: []
-            };
-            
-            tasks.push(newTask);
+            tasks.push({ id: tasks.length + 1, title, description, dueDate, comments: [] });
         }
-        
-        const modal = bootstrap.Modal.getInstance(document.getElementById('taskModal'));
-        modal.hide();
-        
+
+        document.getElementById('task-form').reset();
         loadTasks();
+        bootstrap.Modal.getInstance(document.getElementById('taskModal')).hide();
     });
 
     document.getElementById('save-comment').addEventListener('click', function () {
+        const taskId = parseInt(this.dataset.taskId);
         const commentText = document.getElementById('comment-text').value;
-        
-        if (commentText) {
-            const taskId = parseInt(this.dataset.taskId);
-            
-            const commentsList = document.getElementById(`comments-${taskId}`);
-            
-            // Add the comment to the corresponding task's comments array
-            const taskIndex = tasks.findIndex(t => t.id === taskId);
-            
-            tasks[taskIndex].comments.push(commentText);
 
-            // Create a list item for the comment
-            const commentItem = document.createElement('li');
-            
-            commentItem.className = 'list-group-item d-flex justify-content-between align-items-center';
-            
-            commentItem.textContent = commentText;
+        const task = tasks.find(t => t.id === taskId);
+        if (editingCommentIndex !== null) {
+            task.comments[editingCommentIndex].text = commentText;
+        } else {
+            task.comments.push({ id: task.comments.length + 1, text: commentText });
+        }
 
-            // Create delete button for the comment
-            const deleteButton = document.createElement('button');
-            
-            deleteButton.className = 'btn btn-danger btn-sm';
-            
-            deleteButton.textContent = 'Delete';
-            
-            deleteButton.onclick = function () {
-                commentsList.removeChild(commentItem);
-                
-                // Remove from the comments array
-                tasks[taskIndex].comments.splice(tasks[taskIndex].comments.indexOf(commentText), 1);
-                
-                console.log(tasks[taskIndex].comments); // Debugging line to check comments array
+        loadTasks();
+        bootstrap.Modal.getInstance(document.getElementById('commentModal')).hide();
+    });
 
-             };
-
-             commentItem.appendChild(deleteButton);
-
-             commentsList.appendChild(commentItem);
-
-             // Reset textarea and close modal
-             document.getElementById('comment-text').value = '';
-             const modalCommentInstance = bootstrap.Modal.getInstance(document.getElementById('commentModal'));
-             modalCommentInstance.hide();
-         }
-     });
-
-     loadTasks();
- });
+    loadTasks();
+});
